@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="batepapo.css">
+    <title>Webchat Online</title>
+</head>
+<body>
+    <h1>Webchat Online</h1>
+
+    <form id="chat-form">
+        <label for="user">Usuário:</label>
+        <select id="user" name="user" required>
+            <option value="usuario1">Usuário 1</option>
+            <option value="usuario2">Usuário 2</option>
+        </select>
+
+        <label for="message">Mensagem:</label>
+        <textarea id="message" name="message" placeholder="Digite sua mensagem" required></textarea>
+        <button type="button" onclick="sendMessage()">Enviar Mensagem</button>
+    </form>
+    <div id="chat-box">
+        <div id="chat-messages-container">
+            <div class="message">
+                <strong>Usuário 1:</strong> Olá, como você está?
+                <span class="timestamp">[data e hora]</span>
+            </div>
+            <div class="message">
+                <strong>Usuário 2:</strong> Estou bem, obrigado!
+                <span class="timestamp">[data e hora]</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <a href="/"><button class="btn-voltar">Voltar ao Menu</button></a>
+    </div>
+
+    <script>
+        window.onload = function() {
+            carregarUsuarios();
+            carregarMensagens();
+        };
+    
+        function carregarUsuarios() {
+            fetch('/get-usuarios')
+                .then(response => response.json())
+                .then(data => {
+                    const selectUsuario = document.getElementById('user');
+                    selectUsuario.innerHTML = "";
+    
+                    data.usuarios.forEach(usuario => {
+                        const novoOption = document.createElement('option');
+                        novoOption.value = usuario.usuario;
+                        novoOption.text = usuario.nome;
+                        selectUsuario.add(novoOption);
+                    });
+                })
+                .catch(error => console.error('Erro ao obter usuários:', error));
+        }
+
+        function carregarMensagens() {
+        fetch('/get-mensagens')
+            .then(response => response.json())
+            .then(data => {
+                const chatContainer = document.getElementById('chat-messages-container');
+                chatContainer.innerHTML = '';
+
+                data.forEach(msg => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'message';
+                    messageDiv.innerHTML = `<strong>${msg.usuario}:</strong> ${msg.mensagem}<span class="timestamp">${msg.timestamp}</span>`;
+                    chatContainer.appendChild(messageDiv);
+                });
+            })
+            .catch(error => console.error('Erro ao obter mensagens:', error));
+    }
+
+    function sendMessage() {
+    const usuario = document.getElementById('user').value;
+    const mensagem = document.getElementById('message').value;
+
+    if (usuario && mensagem) {
+        fetch('/enviar-mensagem', {
+            method: 'POST',
+            body: new URLSearchParams({ usuario, mensagem }),
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                document.getElementById('message').value = '';
+                carregarMensagens();
+            } else {
+                alert('Erro ao enviar mensagem: ' + result.error);
+            }
+        })
+        .catch(error => console.error('Erro na requisição:', error));
+    } else {
+        alert('Usuário e mensagem são obrigatórios.');
+    }
+}
+
+
+    </script>
+</body>
+</html>
+    

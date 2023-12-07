@@ -1,0 +1,26 @@
+{
+  "name": "trabalhofinalppi",
+  "version": "1.0.0",
+  "description": "Trabalho Final PPI",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GuHCastro/TrabalhoFinalPPI.git"
+  },
+  "author": "Gustavo Tacaki de Castro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GuHCastro/TrabalhoFinalPPI/issues"
+  },
+  "homepage": "https://github.com/GuHCastro/TrabalhoFinalPPI#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3"
+  }
+}

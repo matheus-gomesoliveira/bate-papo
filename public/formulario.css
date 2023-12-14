@@ -1,20 +1,22 @@
 body {
+    margin: 0;
+    padding: 0;
     display: flex;
+    height: 100vh;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f4f4f4;
+    background-color: #45a049;
 }
 
-#caixa {
+#form {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     width: 300px;
     text-align: center;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin: 50px auto;
 }
 
 form {
@@ -26,7 +28,7 @@ h3 {
     color: #333;
 }
 
-.rotul {
+label{
     margin-top: 10px;
 }
 
@@ -38,17 +40,27 @@ input {
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 4px;
+    background-color: #fff;
+}
+
+.input_label{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
 }
 
 button {
     background-color: #4caf50;
     color: #fff;
     padding: 10px;
-    border: none;
+    border: 2px solid #4caf50;
     border-radius: 4px;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #45a049;
+    transition: ease 0.15s;
+    color: #4caf50;
+    background-color: #fff;
+    border: 2px solid #4caf50;
 }

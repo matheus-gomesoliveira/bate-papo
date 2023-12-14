@@ -7,7 +7,9 @@
     <title>Webchat Online</title>
 </head>
 <body>
-    <h1>Webchat Online</h1>
+    <header>
+        <h1>Webchat Online</h1>
+    </header>
 
     <form id="chat-form">
         <label for="user">Usuário:</label>
@@ -18,24 +20,14 @@
 
         <label for="message">Mensagem:</label>
         <textarea id="message" name="message" placeholder="Digite sua mensagem" required></textarea>
-        <button type="button" onclick="sendMessage()">Enviar Mensagem</button>
+        <button class="btn" type="button" onclick="sendMessage()">Enviar Mensagem</button>
     </form>
     <div id="chat-box">
         <div id="chat-messages-container">
-            <div class="message">
-                <strong>Usuário 1:</strong> Olá, como você está?
-                <span class="timestamp">[data e hora]</span>
-            </div>
-            <div class="message">
-                <strong>Usuário 2:</strong> Estou bem, obrigado!
-                <span class="timestamp">[data e hora]</span>
-            </div>
         </div>
     </div>
 
-    <div class="btn-container">
-        <a href="/"><button class="btn-voltar">Voltar ao Menu</button></a>
-    </div>
+    <a href="/"><button class="btn">Voltar ao Menu</button></a>
 
     <script>
         window.onload = function() {
@@ -52,7 +44,7 @@
     
                     data.usuarios.forEach(usuario => {
                         const novoOption = document.createElement('option');
-                        novoOption.value = usuario.usuario;
+                        novoOption.value = usuario.apelido;
                         novoOption.text = usuario.nome;
                         selectUsuario.add(novoOption);
                     });
@@ -70,9 +62,15 @@
                 data.forEach(msg => {
                     const messageDiv = document.createElement('div');
                     messageDiv.className = 'message';
-                    messageDiv.innerHTML = `<strong>${msg.usuario}:</strong> ${msg.mensagem}<span class="timestamp">${msg.timestamp}</span>`;
+                    messageDiv.innerHTML = `<strong>${msg.usuario}:</strong> ${msg.mensagem}<br><span class="timestamp">${msg.timestamp}</span>`;
                     chatContainer.appendChild(messageDiv);
                 });
+
+                if (data.length === 0) {
+                        document.getElementById('chat-box').style.display = 'none';
+                } else {
+                    document.getElementById('chat-box').style.display = 'flex';
+                }
             })
             .catch(error => console.error('Erro ao obter mensagens:', error));
     }

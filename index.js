@@ -5,15 +5,19 @@ import session from 'express-session';
 
 const porta = 3000;
 const host = '0.0.0.0';
-const listaUSU = [];
+const usuarios = [];
 const messages = [];
+const usuarioAdmin = {
+    nome: "usuario",
+    senha: "senha",
+}
 
-function processaCadastroUsuario(req, res) {
-    const dados = req.body;
+function cadastrarUsuario(req, res) {
+    const {nome, data_nascimento, apelido} = req.body;
 
     let conteudoResposta = '';
 
-    if (!(dados.nome && dados.data && dados.usuario )) {
+    if (!(nome && data_nascimento && apelido )) {
         conteudoResposta = `
         <!DOCTYPE html>
         <html lang="pt-BR">
@@ -28,30 +32,30 @@ function processaCadastroUsuario(req, res) {
                 <form action="/formulario.html" method="POST">
         
                     <h3>CADASTRO</h3>
-                    <label class="rotul" for="nome">Nome:</label>
-                    <input type="text" id="nome" name="nome" placeholder="Insira seu nome." value="${dados.nome}" required>
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" placeholder="Insira seu nome." value="${nome}" required>
         `;
-        if (!dados.nome) {
+        if (!nome) {
             conteudoResposta += `
                     <p class="rockDanger">O campo Nome é obrigatório</p>
             `;
         }
 
         conteudoResposta += `
-                    <label class="rotul" for="data">Data de nascimento:</label>
-                        <input type="text" id="data" name="data" placeholder="Insira seu aniversario." value="${dados.data}" required>
+                    <label for="data_nascimento">Data de nascimento:</label>
+                        <input type="text" id="data" name="data_nascimento" placeholder="Insira seu aniversario." value="${data_nascimento}" required>
         `;
-        if (!dados.data) {
+        if (!data_nascimento) {
             conteudoResposta += `
                     <p class="rockDanger">O campo data é obrigatório</p>
             `;
         }
         
         conteudoResposta += `
-                    <label class="rotul" for="usuario">Nickname ou Usuario:</label>
-                        <input type="text" id="usuario" name="usuario" placeholder="Insira seu nome de usuário." value="${dados.usuario}" required>
+                    <label for="apelido">Nickname ou Usuario:</label>
+                        <input type="text" id="apelido" name="apelido" placeholder="Insira seu nome de usuário." value="${apelido}" required>
         `;   
-        if (!dados.usuario) {
+        if (!apelido) {
             conteudoResposta += `
                     <p class="rockDanger">O campo Nome de Usuário é obrigatório</p>
             `;
@@ -59,7 +63,7 @@ function processaCadastroUsuario(req, res) {
         
         conteudoResposta += `
                     <br>
-                    <button id="BotCad" type="submit">Cadastrar</button>
+                    <button type="submit">Cadastrar</button>
     
                 </form>
             </div>
@@ -67,76 +71,84 @@ function processaCadastroUsuario(req, res) {
         </html>
         `;
         
-        return res.end(conteudoResposta);
+        return res.status(400).end(conteudoResposta);
 
     } else {
-        const usu = {
-            nome: dados.nome,
-            data: dados.data,
-            usuario: dados.usuario,
+        const usuario = {
+            nome: nome,
+            data_nascimento: data_nascimento,
+            apelido: apelido,
         }
 
-        listaUSU.push(usu);
+        usuarios.push(usuario);
 
         conteudoResposta = `
-        <!DOCTYPE html>
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Cadastro de Usuário</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-        </head>
-        <body>
-            <h1>Usuários Cadastrados</h1>
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Data de aniversario</th>
-                        <th>Nome de Usuário</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+            <!DOCTYPE html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Cadastro de Usuário</title>
+                <link rel="stylesheet" type="text/css" href="tabela.css">
+            </head>
+            <body>
+                <header>
+                    <h1>Usuários Cadastrados</h1>
+                </header>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Data de aniversario</th>
+                            <th>Nome de Usuário</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
         
-        for (const usu of listaUSU) {
+        for (const usuario of usuarios) {
             conteudoResposta += `
                 <tr>
-                    <td>${usu.nome}</td>
-                    <td>${usu.data}</td>
-                    <td>${usu.usuario}</td>
+                    <td>${usuario.nome}</td>
+                    <td>${usuario.data_nascimento}</td>
+                    <td>${usuario.apelido}</td>
                 </tr>
                     `;
         }
 
         conteudoResposta += `
-                </tbody>
-            </table>
-            <a class="btn btn-primary" href="/" role="button">Voltar ao Menu</a>
-            <a class="btn btn-outline-info" href="/formulario.html" role="button">Acessar Cadastro</a>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>    
+                    </tbody>
+                </table>
+                <div class="btns">
+                    <a class="btn" href="/" role="button">Voltar ao Menu</a>
+                    <a class="btn" href="/formulario.html" role="button">Novo Cadastro</a>
+                </div>
             </body>
             </html>
                 `;
 
-        return res.end(conteudoResposta);
+        return res.status(200).end(conteudoResposta);
 
     }
 }
 
-
-function autenticar(req, res, next) {
+function auth(req, res, next) {
     if (req.session.usuarioAutenticado) {
         next();
     } else {
-        res.redirect("/login.html");
+        res.status(401).redirect("/login.html");
     }
 }
 
-const app = express();
-app.use(cookieParser());
+function getCurrentTimestamp() {
+    return new Date().toLocaleString();
+}
 
+const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(process.cwd(), './public')));
+app.use(cookieParser());
 app.use(session({
-    secret: "Minh4Chav3S3cr3T4",
+    secret: "secret",
     resave: true,
     saveUninitialized: true,
     cookie: {
@@ -144,11 +156,8 @@ app.use(session({
     }
 }))
 
-app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(process.cwd(), './PaginasHTML')));
-
-app.get('/', autenticar, (req, res) => {
+app.get('/', auth, (req, res) => {
     const dataUltimoAcesso = req.cookies.DataUltimoAcesso;
     const data = new Date();
     res.cookie("DataUltimoAcesso", data.toLocaleString(), {
@@ -161,13 +170,16 @@ app.get('/', autenticar, (req, res) => {
                 <meta charset="UTF-8>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <link rel="stylesheet" type="text/css" href="menu.css">
-                <title>Menu do sistema</title>
+                <title>Menu</title>
                 
             </head>
             <body>
-                <h1>Menu</h1>
+                <header>
+                    <h1>Menu</h1>
+                </header>
                 <a href="/formulario.html">Cadastro de Novo Usuario</a>
                 <a href="/batepapo.html">Acesso ao bate papo</a>
+                <a href="/logout">Sair</a>
             </body>
             <footer>
                 <p>Ultimo Acesso: ${dataUltimoAcesso}</p>
@@ -176,19 +188,17 @@ app.get('/', autenticar, (req, res) => {
     `)
 });
 
-app.get('/formulario.html', autenticar, (req, res) => {
+app.get('/formulario.html', auth, (req, res) => {
     res.sendFile(path.join(process.cwd(), './PaginasHTML/formulario.html'));
 });
 
-app.post('/formulario.html', autenticar, processaCadastroUsuario);
+app.post('/formulario', auth, cadastrarUsuario);
 
 app.post('/login', (req, res) => {
     const usuario = req.body.usuario;
     const senha = req.body.senha;
 
-    console.log("Usuario:", usuario, "Senha:", senha); 
-
-    if (usuario && senha && usuario === 'Gustavo' && senha === '123') {
+    if (usuario && senha && usuario === usuarioAdmin.nome && senha === usuarioAdmin.senha) {
         req.session.usuarioAutenticado = true;
         res.redirect('/');
     } else {
@@ -197,26 +207,35 @@ app.post('/login', (req, res) => {
             <!DOCTYPE html>
                 <head>
                     <meta charset="UTF-8">
-                    <title>Falha no login</title>
+                    <title>Login</title>
                     <link rel="stylesheet" type="text/css" href="errologin.css">
                 </head>
                 <body>
-                    <h1>Usuario ou senha invalidos</h1>
-                    <a href="/login.html">Voltar ao login</a>
+                    <div class="wrap">
+                        <h1>Usuario ou senha invalidos</h1>
+                        <a href="/login.html">Voltar ao login</a>
+                    </div>
                 </body> 
         `)
     }
 });
 
-app.get('/get-usuarios', (req, res) => {
-    res.json({ usuarios: listaUSU });
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Erro ao encerrar a sessão:", err);
+            return res.status(500).end("Erro ao encerrar a sessão");
+        }
+        res.status(200).redirect('/login.html');
+    });
 });
 
-function getCurrentTimestamp() {
-    return new Date().toLocaleString();
-}
+app.get('/get-usuarios', (req, res) => {
+    res.json({ usuarios: usuarios });
+});
 
-app.post('/enviar-mensagem', autenticar, (req, res) => {
+
+app.post('/enviar-mensagem', auth, (req, res) => {
     const usuario = req.body.usuario;
     const mensagem = req.body.mensagem;
 
@@ -230,9 +249,10 @@ app.post('/enviar-mensagem', autenticar, (req, res) => {
     }
 });
 
-app.get('/get-mensagens', autenticar, (req, res) => {
+app.get('/get-mensagens', auth, (req, res) => {
     res.json(messages);
 });
+
 
 
 app.listen(porta, host, () => {
